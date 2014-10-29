@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta name="viewport"
+  content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" href="./dist/css/game.css">
+</head>
+<body>
+    <div class="controls">
+      <button onClick="toggle(this, 'rotate')">Rotate</button>
+      <button onClick="toggle(this, 'pan')">Pan</button>
+      <button onClick="toggle(this, 'zoom')">Zoom</button>
+      <button class="js-toggle-decks">Decks</button>
+      <button class="js-toggle-players">Players</button>
+      <button class="js-toggle-games">Games</button>
+    </div>
+
+    <div class="grid">
+    <div class="grid-fill">
+    <div class="grid-half">
+
+    </div>
+    <div class="grid-half player">
+
+    </div>
+    </div>
+    </div>
+
+    <div class="slide-out js-player-slide-out">
+        <div class="no-wrap">
+            <h2>Players</h2>
+            <ul class="js-players player-list"></ul>
+            <input type="text" class="js-player-name" placeholder="Player Name">
+            <button class="js-create-player">Create Player</button>
+        </div>
+
+    </div>
+
+    <div class="slide-out js-game-slide-out">
+        <div class="no-wrap">
+            <h2>Games</h2>
+            <ul class="js-games game-list"></ul>
+            <div class="js-game-config"></div>
+            <button class="js-create-game">Create Game</button>
+
+        </div>
+    </div>
+
+    <div class="slide-out js-deck-slide-out">
+        <div class="no-wrap">
+            <h2>Decks</h2>
+            <ul class="js-decks"></ul>
+            <div class="js-deck-config"></div>
+            <button class="js-create-deck">Create Deck</button>
+        </div>
+    </div>
+    <!-- <div class="slide-out players">
+        <ul>
+            <li class="games__controls">
+                <button onClick="ui.player.create()">Create</button>
+            </li>
+            <li class="aplyer">
+                <h3>Player Name</h3>
+                <ul class="player__games">
+                    <li></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <div class="slide-out games">
+        <ul>
+            <li class="games__controls">
+                <button onClick="ui.game.create()">Create</button>
+            </li>
+            <li class="game">
+                <ul class="game__players">
+                    <li></li>
+                </ul>
+                game status: 'paused'
+                <div class="game__controls">
+                    <button>Start</button>
+                    <button>End</button>
+                    <button>Pause</button>
+                    <button>Resume</button>
+                    <button>Delete</button>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div class="editor game-edior">
+        <input type="text" value="" placeholder="turn time">
+    </div>
+    <div class="editor player-edior">
+        <input type="text" value="" placeholder="name">
+    </div> -->
+</body>
+<script src="./dist/build.js"></script>
+<script>
+
+    var d = document,
+        players = List(),
+        games = List(),
+        decks = List();
+
+        var createPlayerButton = d.querySelector('.js-create-player'),
+            createGameButton = d.querySelector('.js-create-game'),
+            createDeckButton = d.querySelector('.js-create-deck'),
+            playerName = d.querySelector('.js-player-name'),
+            playerList = d.querySelector('.js-players'),
+            gameList = d.querySelector('.js-games'),
+            gameConfig = d.querySelector('.js-game-config'),
+            toggleDecks = d.querySelector('.js-toggle-decks'),
+            deckSlideOut = d.querySelector('.js-deck-slide-out'),
+            togglePlayers = d.querySelector('.js-toggle-players'),
+            playerSlideOut = d.querySelector('.js-player-slide-out'),
+            toggleGames = d.querySelector('.js-toggle-games'),
+            gameSlideOut = d.querySelector('.js-game-slide-out'),
+            deckConfig = d.querySelector('.js-deck-config');
+
+    function field(config, el){
+
+        return function(key){
+            var input = d.createElement('input'),
+                label = d.createElement('label');
+            input.type = 'text';
+            input.placeholder = label.textContent = key;
+            input.value = config[key];
+            label.appendChild(input);
+            el.appendChild(label);
+        }
+
+    }
+
+    Object.keys(Game.config).forEach(function(key){
+        var input = d.createElement('input'),
+            label = d.createElement('label');
+        input.type = 'text';
+        input.placeholder = label.textContent = key;
+        input.value = Game.config[key];
+        label.appendChild(input);
+        gameConfig.appendChild(label);
+    });
+
+    Object.keys(Game.config).forEach(field(Game.config, gameConfig));
+
+    Object.keys(Deck.config).forEach(field(Deck.config, deckConfig));
+
+    players.push.add(function(player){
+
+        var li = d.createElement('li');
+        li.player = player;
+        li.textContent = player.config.name;
+        playerList.appendChild(li);
+        li.addEventListener('click', function(){
+            li.classList.toggle('player--selected');
+        });
+
+    });
+
+    games.push.add(function(game){
+        var li = d.createElement('li');
+        li.game = game;
+        li.textContent = 'game: ' + game.status;
+        gameList.appendChild(li);
+        li.addEventListener('click', function(){
+            li.classList.toggle('game--selected');
+        });
+    });
+
+    toggleDecks.addEventListener('click', function(){
+        deckSlideOut.classList.toggle('slide-out--active');
+    });
+
+    togglePlayers.addEventListener('click', function(){
+        playerSlideOut.classList.toggle('slide-out--active');
+    });
+
+    toggleGames.addEventListener('click', function(){
+        gameSlideOut.classList.toggle('slide-out--active');
+    });
+
+    createPlayerButton.addEventListener('click', createPlayer);
+    createGameButton.addEventListener('click', createGame);
+    createDeckButton.addEventListener('click', createDeck);
+
+    function createGame(){
+
+        var game = new Game();
+        games.add(game);
+
+    }
+
+    function createPlayer(){
+
+        var player = new Player({name: playerName.value});
+        playerName.value = '';
+        players.add(player);
+
+    }
+
+    function createDeck(){
+
+        var deck = new Deck();
+        decks.add(deck);
+
+    }
+
+    var view = new View3D(document.querySelector('.grid'));
+
+    var b;
+    var clickMap = {
+        zoom: function(e){
+            if(e.target === b){return;}
+                view.config.transformScale = view.transformScale;
+                d.body.removeEventListener('click', this.zoom);
+                toggle(b, 'zoom');
+        }
+    };
+
+    function toggle(btn, name){
+        b = btn;
+        btn.classList.toggle('active');
+        view.config[name] = !view.config[name];
+        view.animation.request();
+        if(view.config[name]){
+            d.body.addEventListener('click', clickMap[name]);
+        }else{
+            d.body.removeEventListener('click', clickMap[name]);
+        }
+    }
+
+
+
+
+
+
+</script>
+</html>

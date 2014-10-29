@@ -1,0 +1,21 @@
+.grid{
+    width:100%;
+    padding-top:100%;
+    background:#333;
+    top:50%;
+    position:relative;
+    margin-top:-50%;
+
+}
+
+.grid:before{
+    content:'';
+    position:absolute;
+    top:-50%;
+    left:-50%;
+    width:200%;
+    height:200%;
+    background: linear-gradient(transparent 99px, rgba(255, 255, 255, .2) 100px),
+        linear-gradient(90deg, transparent 99px, rgba(255, 255, 255, .2) 100px);
+    background-size: 100px 100px;
+}

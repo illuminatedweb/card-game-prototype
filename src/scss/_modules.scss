@@ -1,0 +1,6 @@
+@mixin ratio($ratio: 1 1) {
+  $height: percentage(nth($ratio, 2) / nth($ratio, 1)); 
+  width: 100%;
+  height: 0;
+  padding-top: $height;
+}
